@@ -1,0 +1,335 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+@import "./components/editor/editor.css";
+
+@layer base {
+  :root {
+    /* Notion-inspired palette */
+    --background: 40 20% 98%;
+    --foreground: 30 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 30 15% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 15% 15%;
+    --primary: 215 70% 42%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 40 15% 95%;
+    --secondary-foreground: 30 15% 15%;
+    --muted: 40 15% 95%;
+    --muted-foreground: 30 8% 45%;
+    --accent: 40 15% 93%;
+    --accent-foreground: 30 15% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 30 10% 88%;
+    --border-subtle: 30 10% 88%;
+    --input: 30 10% 88%;
+    --ring: 215 70% 42%;
+    --radius: 0.5rem;
+    --sidebar: 40 15% 97%;
+    --sidebar-foreground: 30 15% 20%;
+    --sidebar-border: 30 10% 88%;
+    --chart-1: 215 70% 50%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 34%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --font-scale: 4;
+    /* Density: row height */
+    --row-height: 40px;
+    --row-padding-y: 8px;
+  }
+
+  /* Compact density */
+  [data-density="compact"] {
+    --row-height: 32px;
+    --row-padding-y: 4px;
+  }
+
+  /* Dark/Night Mode */
+  [data-theme="dark"] {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 210 100% 62%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 210 100% 62%;
+    --sidebar: 222 47% 8%;
+    --sidebar-foreground: 210 40% 90%;
+    --sidebar-border: 217 33% 17%;
+  }
+
+  /* Eye-care (Warm Sepia) Mode */
+  [data-theme="eye-care"] {
+    --background: 45 30% 93%;
+    --foreground: 30 15% 20%;
+    --card: 45 25% 96%;
+    --card-foreground: 30 15% 20%;
+    --popover: 45 25% 96%;
+    --popover-foreground: 30 15% 20%;
+    --primary: 30 40% 35%;
+    --primary-foreground: 45 30% 96%;
+    --secondary: 40 20% 88%;
+    --secondary-foreground: 30 15% 20%;
+    --muted: 40 20% 88%;
+    --muted-foreground: 30 10% 50%;
+    --accent: 42 25% 85%;
+    --accent-foreground: 30 15% 20%;
+    --destructive: 0 50% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 20% 80%;
+    --input: 35 20% 80%;
+    --ring: 30 40% 35%;
+    --sidebar: 45 25% 96%;
+    --sidebar-foreground: 30 15% 25%;
+    --sidebar-border: 35 20% 80%;
+  }
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  font-family: 'Noto Sans SC', 'Inter', system-ui, -apple-system, sans-serif;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+  /* iOS safe area support */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Font size scaling: 8 levels. Only scale font-related properties, not layout.
+   Layout widths (sidebar, panel, header) use fixed px to stay stable. */
+html {
+  font-size: calc(14px + (var(--font-scale) - 1) * 1.5px);
+}
+
+/* Ensure fixed-px text sizes also scale with root font-size */
+.text-10px, [class*="text-[10px]"] {
+  font-size: 0.625rem !important;
+}
+.text-9px, [class*="text-[9px]"] {
+  font-size: 0.5625rem !important;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.22);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.38);
+}
+
+/* Focus ring */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Smooth transitions */
+button, a, input, select, textarea {
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+/* Card-like elevation */
+.shadow-card {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+}
+
+.shadow-elevated {
+  box-shadow: 0 10px 40px -12px hsl(var(--foreground) / 0.14), 0 3px 12px -3px hsl(var(--foreground) / 0.08);
+}
+
+/* Glass panel */
+.glass {
+  background: hsl(var(--background) / 0.85);
+  backdrop-filter: blur(12px);
+}
+
+/* Elegant surface */
+.surface {
+  background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted) / 0.35) 100%);
+}
+
+/* Subtle noise overlay */
+.noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Beautiful range slider */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: hsl(var(--muted));
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--background));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  border: 2px solid hsl(var(--background));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+/* Better date input icons in dark mode */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.4);
+  cursor: pointer;
+}
+
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
+/* Animated loading spinner */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+/* Selection color */
+::selection {
+  background: hsl(var(--primary) / 0.2);
+  color: hsl(var(--foreground));
+}
+
+/* ── Notion-style micro-interactions ── */
+
+/* Hover reveal: controls hidden by default, visible on hover */
+.hover-reveal {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.group:hover .hover-reveal,
+tr:hover .hover-reveal,
+.hover-reveal-parent:hover .hover-reveal {
+  opacity: 1;
+}
+
+/* Drag handle: subtle dots */
+.drag-handle {
+  opacity: 0;
+  cursor: grab;
+  transition: opacity 0.15s ease;
+}
+.group:hover .drag-handle,
+tr:hover .drag-handle {
+  opacity: 1;
+}
+
+/* Touch devices: hover-reveal items always visible */
+@media (hover: none) {
+  .hover-reveal {
+    opacity: 1;
+  }
+  .drag-handle {
+    opacity: 0.5;
+  }
+}
+
+/* Click-to-edit: plain text that shows focus ring on click */
+.click-to-edit {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 1px 4px;
+  margin: -1px -4px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  cursor: text;
+}
+.click-to-edit:hover {
+  background: hsl(var(--muted) / 0.5);
+}
+.click-to-edit:focus {
+  outline: none;
+  border-color: hsl(var(--ring));
+  background: hsl(var(--background));
+  box-shadow: 0 0 0 1px hsl(var(--ring) / 0.2);
+}
+
+/* Notion-style subtle border */
+.border-subtle {
+  border-color: hsl(var(--border-subtle) / 0.6);
+}
+.hover\:border-subtle:hover {
+  border-color: hsl(var(--border-subtle));
+}
+
+/* Card hover elevation */
+.card-hover {
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.card-hover:hover {
+  border-color: hsl(var(--border-subtle));
+  box-shadow: 0 1px 4px 0 hsl(var(--foreground) / 0.04);
+}
+
+/* iOS safe area bottom padding utility */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
